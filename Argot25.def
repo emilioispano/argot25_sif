@@ -1,0 +1,60 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%labels
+    Author Emilio Ispano
+    Version Argot2.5-pipeline
+    Description "Singularity image for running the Argot2.5 + DIAMOND prediction pipeline"
+
+%environment
+    export LC_ALL=C
+    export LANG=C
+    export PATH=/usr/local/bin:/argot25/bin:$PATH
+    export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+    export ARGOT_JAR=/argot25/bin/Argot3-1.0.jar
+    export PYTHONPATH=/argot25/src
+
+%post
+    apt-get update && apt-get install -y --no-install-recommends \
+        openjdk-17-jre-headless \
+        python3 python3-pip python3-dev \
+        build-essential libxml2-dev libxslt1-dev zlib1g-dev \
+        wget unzip git \
+        && rm -rf /var/lib/apt/lists/*
+
+    # Python packages
+    pip install --no-cache-dir pymongo owlready2 tqdm
+
+    # Create directories
+    mkdir -p /argot25/bin /argot25/src /data
+
+%files
+    # Copy DIAMOND and Argot3 executables
+    bin/diamond /argot25/bin/diamond
+    bin/Argot3-1.0.jar /argot25/bin/Argot3-1.0.jar
+
+    # Copy Python scripts
+    src/clean_blastp.py /argot25/src/clean_blastp.py
+    src/in-cafa_format.py /argot25/src/in-cafa_format.py
+    src/new_blastp_to_argot_inp.py /argot25/src/new_blastp_to_argot_inp.py
+    src/owlLibrary3.py /argot25/src/owlLibrary3.py
+    src/propagate.py /argot25/src/propagate.py
+    src/format_out.py /argot25/src/format_out.py
+    src/check_fasta.py /argot25/src/check_fasta.py
+
+    # Optionally include support files if desired
+    support_files/go.owl /argot25/support_files/go.owl
+
+    # Include your main pipeline script
+    pipeline_sing.sh /argot25/pipeline.sh
+
+%runscript
+    echo "=== Argot3 Portable Pipeline ==="
+    echo "Java: $(java -version 2>&1 | head -n 1)"
+    echo "Python: $(python3 --version)"
+    echo "DIAMOND: $(diamond --version)"
+    echo "---------------------------------"
+    echo "Usage:"
+    echo "  singularity run Argot3.sif [options]"
+    echo ''
+    bash /argot25/pipeline.sh "$@"
