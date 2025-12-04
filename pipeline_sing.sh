@@ -92,7 +92,7 @@ echo "Converting to CAFA format..."
 python3 $src/in-cafa_format.py -i $output/argot_out.txt -v Argot3 -o $output/ -f temporary
 
 echo "Propagating GO terms..."
-mv $output/temporary_argot_out_in_cafa.txt $output/predictions_raw.tsv"
+mv $output/temporary_argot_out_in_cafa.txt $output/predictions_raw.tsv
 python3 $src/propagate.py -i $output/predictions_raw.tsv -o $output/predictions_prop.tsv -g /argot25/support_files/go.owl -p
 
 python3 $src/format_out.py -i $output/predictions_raw.tsv -o $preds/unpropagated.tsv -g /argot25/support_files/go.owl
