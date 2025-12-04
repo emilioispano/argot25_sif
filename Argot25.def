@@ -26,7 +26,7 @@ From: ubuntu:22.04
     pip install --no-cache-dir pymongo owlready2 tqdm
 
     # Create directories
-    mkdir -p /argot25/bin /argot25/src /data
+    # mkdir -p /argot25/bin /argot25/src /data
 
 %files
     # Copy DIAMOND and Argot3 executables
