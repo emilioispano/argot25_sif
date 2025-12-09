@@ -17,7 +17,7 @@ usage() {
     echo "Usage: $0 [options]"
     echo
     echo "Options:"
-    echo "  -d <db>           DIAMOND database name (prefix, not .dmnd)"
+    echo "  -d <db>           DIAMOND database name DB.dmnd"
     echo "  -f <fasta>        Input FASTA file for DIAMOND/Argot"
     echo "  -o <outdir>       Output directory for results"
     echo "  -t <threads>      Number of threads (default: 1)"
