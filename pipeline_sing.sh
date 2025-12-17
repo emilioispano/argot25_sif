@@ -60,20 +60,16 @@ fi
 # Run pipeline
 # -----------------------------
 src=/argot25/src
-
-
-echo "=== CHECKING FASTA HEADER FORMAT ==="
-python3 $src/check_fasta.py -f "$source_fasta" -o "${source_fasta}.clean"
-mv "${source_fasta}.clean" "$source_fasta"
-
-echo "=== RUNNING DIAMOND & ARGOT PIPELINE ==="
-mkdir -p $results $results/data/input $results/data/output $results/predictions
 input=$results/data/input
 output=$results/data/output
 preds=$results/predictions
+mkdir -p $input $output $preds
 
-echo "Running DIAMOND..."
-$diamond blastp -d $diamond_db -q $source_fasta -o $output/diamond_raw.blastp -f 6 -b 5 -c 1 -k 1000 -p $threads
+echo "=== CHECKING FASTA HEADER FORMAT ==="
+python3 $src/check_fasta.py -f $source_fasta -o $input/proteins_list.fasta
+
+echo "=== RUNNING DIAMOND & ARGOT PIPELINE ==="
+$diamond blastp -d $diamond_db -q $input/proteins_list.fasta -o $output/diamond_raw.blastp -f 6 -b 5 -c 1 -k 1000 -p $threads
 
 echo "Cleaning DIAMOND output..."
 if [ -f $output/diamond_clean.blastp ]
